@@ -31,10 +31,8 @@ void fmatmul(float * __restrict c_,
   } else if (M <= 64) {
     fmatmul_16x16(c, a, b, M, N, P);
   } else if (M <= 128) {
-    // VL=64; con 8x8 (LMUL=2) ottieni VL effettiva 128
     fmatmul_8x8(c, a, b, M, N, P);
   } else {
-    // VL=64; con 4x4 (LMUL=4) ottieni VL effettiva 256
     fmatmul_4x4(c, a, b, M, N, P);
   }
 }
@@ -87,8 +85,6 @@ void fmatmul_vec_4x4_slice_init() {
 void fmatmul_vec_4x4(float *c, const float *a, const float *b,
                        const unsigned long int N, const unsigned long int P) {
   unsigned long stride_a = N * sizeof(float);
-
-  // Accumulatori per il blocco C (4 colonne)
   
 
   for (unsigned long k = 0; k < N; k++) {
