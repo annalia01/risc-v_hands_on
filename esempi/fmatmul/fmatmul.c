@@ -24,17 +24,8 @@ void fmatmul(float * __restrict c_,
   const float * __restrict a = ASSUME_ALIGNED_64(a_);
   const float * __restrict b = ASSUME_ALIGNED_64(b_);
 
-  if (M <= 4) {
     fmatmul_4x4(c, a, b, M, N, P);
-  } else if (M <= 8) {
-    fmatmul_8x8(c, a, b, M, N, P);
-  } else if (M <= 64) {
-    fmatmul_16x16(c, a, b, M, N, P);
-  } else if (M <= 128) {
-    fmatmul_8x8(c, a, b, M, N, P);
-  } else {
-    fmatmul_4x4(c, a, b, M, N, P);
-  }
+  
 }
 
 // ============================================================================
