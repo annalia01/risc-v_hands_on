@@ -12,7 +12,7 @@ CFLAGS := -O2 -march=$(MARCH) -mabi=$(ABI)
 
 # ==== Sorgenti/target ====
 TARGET := main.elf
-SRCS   := main.c fmatmul.c printf.c util.c dataset.c serial.c
+SRCS   := main.c fmatmul.c util.c dataset.c
 
 .PHONY: all run clean
 
