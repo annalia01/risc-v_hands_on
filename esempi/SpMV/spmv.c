@@ -23,14 +23,10 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <string.h>
-
-#ifndef SPIKE
-#include "printf.h"
-#else
 #include <stdio.h>
-#endif
 
 
+#define SLICE_SIZE 128
 #define DATA_BYTE 8 // double type has 8 bytes
 
 void spmv_csr_idx32(int32_t N_ROW, int32_t *CSR_PROW, int32_t *CSR_INDEX,
@@ -75,6 +71,7 @@ void spmv_csr_idx32(int32_t N_ROW, int32_t *CSR_PROW, int32_t *CSR_INDEX,
     }
   }
 }
+
 int spmv_verify(int32_t N_ROW, int32_t *CSR_PROW, int32_t *CSR_INDEX,
                 double *CSR_DATA, double *IN_VEC, double *OUT_VEC) {
   for (int32_t i = 0; i < N_ROW; ++i) {
@@ -98,4 +95,3 @@ int spmv_verify(int32_t N_ROW, int32_t *CSR_PROW, int32_t *CSR_INDEX,
   }
   return 0;
 }
-
