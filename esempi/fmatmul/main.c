@@ -24,13 +24,7 @@
 #include "runtime.h"
 #include "util.h"
 
-#ifdef SPIKE
 #include <stdio.h>
-#elif defined ARA_LINUX
-#include <stdio.h>
-#else
-#include "printf.h"
-#endif
 #define NR_LANES 8
 // Define Matrix dimensions:
 // C = AB with A=[MxN], B=[NxP], C=[MxP]
