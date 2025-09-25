@@ -25,24 +25,7 @@
   At the end of the file, you can find the not-unrolled main loop in a comment,
   without the edge-code.
 
-  Algorithm:
-  a) Load the next input row
-  b) Calculate its contributions to the F = 7 output rows using one column of
-  the filter c) Slide down the input row by 1, injecting the next input scalar
-  element in the tail d) Repeat from b), taking the next colum of the filter,
-  until the last column is fetched e) Store the first output row, the one that
-  is complete f) Move all the output rows up by one register, to restore the
-  initial condition g) Repeat from a)
-
-  Every time a new input row is loaded, a new output row is created.
-
-  The first 6 rows and the last 6 rows do not follow this pattern, thus we wrote
-  dedicated code. Because of the unrolling, we counted for this the first and
-  last 7 rows, instead of 6
-
-  This algorithm helps in minimizing the data dependencies, as every input rows
-  is used To calculate 7 different output rows.
-*/
+  
 
 #include "iconv2d.h"
 #include <stdio.h>
@@ -623,42 +606,4 @@ t28_1=f[28 + (2 * k + 1)];
   asm volatile("vse32.v  v28, (%0); add %0, %0, %1" : "+&r"(o) : "r"(ldo));
 }
 
-/*
-  ////////////////////
-  // MAIN ALGORITHM //
-  ////////////////////
 
-  // Start calculating the pointer to the next element to be slided in
-  i_slide_ptr_0 = i + C;
-
-  // Load one input row
-  asm volatile("vle64.v v0, (%0); add %0, %0, %1" : "+&r"(i) : "r"(ldi_pad));
-
-  // Kernel
-  for (int k = 0; k < F; ++k) {
-    // Calculate F*F contributions of the input rows, on F different output rows
-    // v28 should be initialized during the first iteration
-    asm volatile("vmacc.vx v16, %0, v0" :: "r"(f[42  + (2*k)]));
-    asm volatile("vmacc.vx v18, %0, v0" :: "r"(f[35  + (2*k)]));
-    asm volatile("vmacc.vx v20, %0, v0" :: "r"(f[28 + (2*k)]));
-    asm volatile("vmacc.vx v22, %0, v0" :: "r"(f[21 + (2*k)]));
-    asm volatile("vmacc.vx v24, %0, v0" :: "r"(f[14 + (2*k)]));
-    asm volatile("vmacc.vx v26, %0, v0" :: "r"(f[7 + (2*k)]));
-    if (k == 0)
-      asm volatile("vmul.vx v28, v0, %0" :: "r"(f[0 + (2*k)]));
-    else
-      asm volatile("vmacc.vx v28, %0, v0" :: "r"(f[0 + (2*k)]));
-
-    // Slide the input row by one, and inject the next scalar element of the row
-    asm volatile("vslide1down.vx v0, v0, %0" :: "r"(*i_slide_ptr_0++));
-  }
-
-  // Store one output row
-  asm volatile("vse64.v  v16, (%0); add %0, %0, %1" : "+&r"(o) : "r"(ldo));
-
-  // Move all the input rows to return to the initial situation
-  // To avoid these operations, unroll the loop via software, renaming the
-  registers manually asm volatile("vmv.v.v v16, v18"); asm volatile("vmv.v.v
-  v18, v20"); asm volatile("vmv.v.v v20, v22"); asm volatile("vmv.v.v v22,
-  v24"); asm volatile("vmv.v.v v24, v26"); asm volatile("vmv.v.v v26, v28");
-*/
