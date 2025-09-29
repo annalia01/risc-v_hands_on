@@ -19,9 +19,9 @@
 #include <stdint.h>
 #include <string.h>
 
-#include "spmv.h"
-#include "runtime.h"
-#include "util.h"
+#include "../inc/spmv.h"
+#include "../../../common/runtime.h"
+#include "../../../common/util.h"
 
 
 #include <stdio.h>
