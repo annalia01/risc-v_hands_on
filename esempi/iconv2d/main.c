@@ -21,10 +21,10 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "iconv2d.h"
-#include "runtime.h"
+#include "inc/iconv2d.h"
+#include "../../common/runtime.h"
 
-#include "util.h"
+#include "../../common/util.h"
 
 
 #define NR_LANES 8
