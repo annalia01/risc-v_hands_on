@@ -2,7 +2,7 @@
 // Copyright 2020 ETH Zurich and University of Bologna.
 // SPDX-License-Identifier: Apache-2.0
 
-#include "fmatmul.h"
+#include "../inc/fmatmul.h"
 #include <stddef.h>
 #include <stdint.h>
 #include <stdlib.h>
