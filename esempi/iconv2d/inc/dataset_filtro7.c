@@ -35,10 +35,22 @@ int32_t f[49] __attribute__((aligned(32))) = {
 int32_t o[25] __attribute__((aligned(32))) = {0};
 
 // Golden output calcolato a mano (5x5)
-int32_t golden_o[25] __attribute__((aligned(32))) = {
-    -28,  -28,  -28,  -28,  -28,
-    -28,  -28,  -28,  -28,  -28,
-    -28,  -28,  -28,  -28,  -28,
-    -28,  -28,  -28,  -28,  -28,
-    -28,  -28,  -28,  -28,  -28
-};
+int32_t golden_o[25] __attribute__((aligned(32))) = {0};
+
+void init_dataset() {
+for (uint32_t r = 0; r < M; ++r) {
+    for (uint32_t c = 0; c < N; ++c) {
+      int32_t acc = 0;
+      for (uint32_t fr = 0; fr < F; ++fr) {
+        for (uint32_t fc = 0; fc < F; ++fc) {
+          int32_t in_r = r + fr;
+          int32_t in_c = c + fc;
+          int32_t in_val = i[in_r * (N + F - 1) + in_c];
+          int32_t f_val = f[fr * F + fc];
+          acc += in_val * f_val;
+        }
+      }
+      golden_o[r * N + c] = acc;
+    }
+  }
+  }
