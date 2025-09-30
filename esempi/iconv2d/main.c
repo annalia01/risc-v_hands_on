@@ -26,7 +26,7 @@
 
 #include "../../common/util.h"
 
-
+void init_dataset();
 #define NR_LANES 8
 // Define Matrix dimensions:
 // o = i ° f, with i=[MxN], f=[FxF], o=[MxN]
@@ -76,7 +76,7 @@ int main() {
   printf("\n");
 
   // Call the main kernel, and measure cycles
-  
+  init_dataset();
   start_timer();
   if (F == 3)
     iconv2d_3x3(o, i, f, M, N, F);
