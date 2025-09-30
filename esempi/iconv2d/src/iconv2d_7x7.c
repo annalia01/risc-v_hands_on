@@ -25,9 +25,26 @@
   At the end of the file, you can find the not-unrolled main loop in a comment,
   without the edge-code.
 
-  
+  Algorithm:
+  a) Load the next input row
+  b) Calculate its contributions to the F = 7 output rows using one column of
+  the filter c) Slide down the input row by 1, injecting the next input scalar
+  element in the tail d) Repeat from b), taking the next colum of the filter,
+  until the last column is fetched e) Store the first output row, the one that
+  is complete f) Move all the output rows up by one register, to restore the
+  initial condition g) Repeat from a)
 
-#include "iconv2d.h"
+  Every time a new input row is loaded, a new output row is created.
+
+  The first 6 rows and the last 6 rows do not follow this pattern, thus we wrote
+  dedicated code. Because of the unrolling, we counted for this the first and
+  last 7 rows, instead of 6
+
+  This algorithm helps in minimizing the data dependencies, as every input rows
+  is used To calculate 7 different output rows.
+*/
+
+#include "../inc/iconv2d.h"
 #include <stdio.h>
 
 void iconv2d_7x7(int32_t *o, int32_t *i, int32_t *f, int64_t M, int64_t N,
@@ -605,5 +622,3 @@ t28_1=f[28 + (2 * k + 1)];
   asm volatile("vmacc.vx v28, %0, v10" ::"r"(t48));
   asm volatile("vse32.v  v28, (%0); add %0, %0, %1" : "+&r"(o) : "r"(ldo));
 }
-
-
