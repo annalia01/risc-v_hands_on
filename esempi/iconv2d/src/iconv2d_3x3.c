@@ -27,11 +27,11 @@ void iconv2d_3x3(int32_t *o, int32_t *i, int32_t *f, int64_t R, int64_t C,
                  int64_t F) {
 
   // We work on 4 rows of the output matrix at once
-  int32_t block_size_o = 4;
+  int32_t block_size_o = 3;
   // We work on block_size_o + F - 1 rows of the input matrix at once
 
   // First iteration round, r = 0
-  int32_t *i_ = i;
+  
   int32_t *o_ = o;
 
   
@@ -63,115 +63,105 @@ for (int32_t r = 0; r < R; r += block_size_o) {
     // Fetch C + F - 1 elements (padding included)
   int32_t ldo = C << 2;
   int32_t *i___=i+r*(C+F-1);
-  int32_t *i_col = i + r*(C+F-1) + 2;
+  int32_t *i_col = i + r*(C+F-1) + 1;
   
   // Fetch C + F - 1 elements (padding included)
-  asm volatile("vsetvli zero, %0, e32, m2, ta, ma" ::"r"(C + F - 1));
+  asm volatile("vsetvli zero, %0, e32, m4, ta, ma" ::"r"(C + F - 1));
   asm volatile("vmv.v.i v0, 0");
-  asm volatile("vmv.v.i v2, 0");
   asm volatile("vmv.v.i v4, 0");
-  asm volatile("vmv.v.i v6, 0");
+  asm volatile("vmv.v.i v8, 0");
   
-  asm volatile("vle32.v v8,  (%0); add %0, %0, %1" : "+&r"(i___) : "r"(ldi));
+  asm volatile("vle32.v v12,  (%0); add %0, %0, %1" : "+&r"(i___) : "r"(ldi));
   
-  asm volatile("vle32.v v10, (%0); add %0, %0, %1" : "+&r"(i___) : "r"(ldi));
-  
-
-  asm volatile("vle32.v v12, (%0); add %0, %0, %1" : "+&r"(i___) : "r"(ldi));
-  
-
-  asm volatile("vmul.vx v0, v8, %0" ::"r"(t0));
-  
-  asm volatile("vmul.vx v2, v10, %0" ::"r"(t0));
-  asm volatile("vle32.v v14, (%0); add %0, %0, %1" : "+&r"(i___) : "r"(ldi));
-  
-  asm volatile("vmacc.vx v0, %0, v10" ::"r"(t1));
-
-  asm volatile("vmacc.vx v2, %0, v12" ::"r"(t1));
   asm volatile("vle32.v v16, (%0); add %0, %0, %1" : "+&r"(i___) : "r"(ldi));
   
-  asm volatile("vmacc.vx v0, %0, v12" ::"r"(t2));
+
+  asm volatile("vle32.v v20, (%0); add %0, %0, %1" : "+&r"(i___) : "r"(ldi));
   
-  asm volatile("vslidedown.vi v20, v8,  1");
-  asm volatile("vmul.vx v4, v12, %0" ::"r"(t0));
 
-  asm volatile("vle32.v v18, (%0); add %0, %0, %1" : "+&r"(i___) : "r"(ldi));
+  asm volatile("vmul.vx v0, v12, %0" ::"r"(t0));
+  
+  asm volatile("vmul.vx v4, v16, %0" ::"r"(t0));
+  asm volatile("vle32.v v24, (%0); add %0, %0, %1" : "+&r"(i___) : "r"(ldi));
+  
+  asm volatile("vmacc.vx v0, %0, v16" ::"r"(t1));
 
-  asm volatile("vsetvli zero, %0, e32, m2, ta, ma" ::"r"(C));
-
-  asm volatile("vmul.vx v6, v14, %0" ::"r"(t0));
-  asm volatile("vmacc.vx v4, %0, v14" ::"r"(t1));
-  asm volatile("vslidedown.vi v22, v10, 1");
-  asm volatile("vmacc.vx v2, %0, v14" ::"r"(t2));
-
-  asm volatile("vmacc.vx v6, %0, v16" ::"r"(t1));
-  asm volatile("vmacc.vx v4, %0, v16" ::"r"(t2));
-
-  asm volatile("vslidedown.vi v24, v12, 1");
-  asm volatile("vmacc.vx v6, %0, v18" ::"r"(t2));
+  asm volatile("vmacc.vx v4, %0, v20" ::"r"(t1));
+  asm volatile("vle32.v v28, (%0); add %0, %0, %1" : "+&r"(i___) : "r"(ldi));
+  
+  asm volatile("vmacc.vx v0, %0, v20" ::"r"(t2));
+  
+  asm volatile("vle32.v v12,  (%0); add %0, %0, %1" : "+&r"(i_col) : "r"(ldi));
+  asm volatile("vmul.vx v8, v20, %0" ::"r"(t0));
 
 
-  asm volatile("vmacc.vx v0, %0, v20" ::"r"(t3));
+  asm volatile("vsetvli zero, %0, e32, m4, ta, ma" ::"r"(C));
 
-  asm volatile("vmacc.vx v0, %0, v22" ::"r"(t4));
-  asm volatile("vslidedown.vi v26, v14, 1");
-  asm volatile("vmacc.vx v2, %0, v22" ::"r"(t3));
+  asm volatile("vmacc.vx v8, %0, v24" ::"r"(t1));
+  
+  asm volatile("vle32.v v16,  (%0); add %0, %0, %1" : "+&r"(i_col) : "r"(ldi));
+  asm volatile("vmacc.vx v4, %0, v24" ::"r"(t2));
 
-  asm volatile("vmacc.vx v0, %0, v24" ::"r"(t5));
-  asm volatile("vmacc.vx v2, %0, v24" ::"r"(t4));
-  asm volatile("vslidedown.vi v28, v16, 1");
-  asm volatile("vmacc.vx v4, %0, v24" ::"r"(t3));
+  asm volatile("vmacc.vx v8, %0, v28" ::"r"(t2));
 
-  asm volatile("vmacc.vx v2, %0, v26" ::"r"(t5));
-  asm volatile("vmacc.vx v4, %0, v26" ::"r"(t4));
-  asm volatile("vslidedown.vi v30, v18, 1");
-  asm volatile("vmacc.vx v6, %0, v26" ::"r"(t3));
+  asm volatile("vle32.v v20,  (%0); add %0, %0, %1" : "+&r"(i_col) : "r"(ldi));
 
-  asm volatile("vmacc.vx v4, %0, v28" ::"r"(t5));
-  asm volatile("vslidedown.vi v20, v8,  2");
+  asm volatile("vmacc.vx v0, %0, v12" ::"r"(t3));
+
+  asm volatile("vmacc.vx v0, %0, v16" ::"r"(t4));
+  asm volatile("vle32.v v24,  (%0); add %0, %0, %1" : "+&r"(i_col) : "r"(ldi));
+  
+  asm volatile("vmacc.vx v4, %0, v16" ::"r"(t3));
+
+  asm volatile("vmacc.vx v0, %0, v20" ::"r"(t5));
+  asm volatile("vmacc.vx v4, %0, v20" ::"r"(t4));
+  
+  asm volatile("vle32.v v28,  (%0); add %0, %0, %1" : "+&r"(i_col) : "r"(ldi));
+  asm volatile("vmacc.vx v8, %0, v20" ::"r"(t3));
+
+  asm volatile("vmacc.vx v4, %0, v24" ::"r"(t5));
+  asm volatile("vmacc.vx v8, %0, v24" ::"r"(t4));
+
+
+  asm volatile("vmacc.vx v8, %0, v28" ::"r"(t5));
+  
+  i_col = i + r*(C+F-1) + 2;
   
   
+  asm volatile("vle32.v v12,  (%0); add %0, %0, %1" : "+&r"(i_col) : "r"(ldi));
   
-  asm volatile("vmacc.vx v6, %0, v28" ::"r"(t4));
+  asm volatile("vle32.v v16,  (%0); add %0, %0, %1" : "+&r"(i_col) : "r"(ldi));
 
-  asm volatile("vmacc.vx v6, %0, v30" ::"r"(t5));
+  asm volatile("vmacc.vx v0, %0, v12" ::"r"(t6));
 
-  asm volatile("vslidedown.vi v22, v10,  2");
-
-
-  asm volatile("vmacc.vx v0, %0, v20" ::"r"(t6));
-
-  asm volatile("vmacc.vx v0, %0, v22" ::"r"(t7));
+  asm volatile("vmacc.vx v0, %0, v16" ::"r"(t7));
  
-  asm volatile("vslidedown.vi v24, v12,  2");
-  asm volatile("vmacc.vx v2, %0, v22" ::"r"(t6));
+  asm volatile("vle32.v v20,  (%0); add %0, %0, %1" : "+&r"(i_col) : "r"(ldi));
+  
+  
+  asm volatile("vmacc.vx v4, %0, v16" ::"r"(t6));
 
   // Compute on C elements
 
-  asm volatile("vmacc.vx v0, %0, v24" ::"r"(t8));
+  asm volatile("vmacc.vx v0, %0, v20" ::"r"(t8));
   
   asm volatile("vse32.v  v0, (%0); add %0, %0, %1" : "+&r"(o_) : "r"(ldo));
   
-  asm volatile("vslidedown.vi v26, v14,  2");
-  asm volatile("vmacc.vx v2, %0, v24" ::"r"(t7));
-  asm volatile("vmacc.vx v4, %0, v24" ::"r"(t6));
+  asm volatile("vle32.v v24,  (%0); add %0, %0, %1" : "+&r"(i_col) : "r"(ldi));
+  
+  asm volatile("vmacc.vx v4, %0, v20" ::"r"(t7));
+  asm volatile("vmacc.vx v8, %0, v20" ::"r"(t6));
 
-  asm volatile("vmacc.vx v2, %0, v26" ::"r"(t8));
-  if(r+1<R) asm volatile("vse32.v  v2, (%0); add %0, %0, %1" : "+&r"(o_) : "r"(ldo));
+  asm volatile("vmacc.vx v4, %0, v24" ::"r"(t8));
+  if(r+1<R) asm volatile("vse32.v  v4, (%0); add %0, %0, %1" : "+&r"(o_) : "r"(ldo));
 
-  asm volatile("vslidedown.vi v28, v16,  2");
-  asm volatile("vmacc.vx v4, %0, v26" ::"r"(t7));
-  asm volatile("vmacc.vx v6, %0, v26" ::"r"(t6));
+  asm volatile("vle32.v v28,  (%0); add %0, %0, %1" : "+&r"(i_col) : "r"(ldi));
+  
+  asm volatile("vmacc.vx v8, %0, v24" ::"r"(t7));
 
-  asm volatile("vmacc.vx v4, %0, v28" ::"r"(t8));
+  asm volatile("vmacc.vx v8, %0, v28" ::"r"(t8));
 
-  asm volatile("vslidedown.vi v30, v18,  2");
-  if(r+2<R) asm volatile("vse32.v  v4, (%0); add %0, %0, %1" : "+&r"(o_) : "r"(ldo));
-  asm volatile("vmacc.vx v6, %0, v28" ::"r"(t7));
-
-  asm volatile("vmacc.vx v6, %0, v30" ::"r"(t8));
-  if(r+3<R) asm volatile("vse32.v  v6, (%0); add %0, %0, %1" : "+&r"(o_) : "r"(ldo));
+  if(r+2<R) asm volatile("vse32.v  v8, (%0); add %0, %0, %1" : "+&r"(o_) : "r"(ldo));
+  
   }
 }
-
-
