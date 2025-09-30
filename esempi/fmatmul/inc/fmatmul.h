@@ -30,19 +30,13 @@ void fmatmul_4x4(float *c, const float *a, const float *b,
 void fmatmul_vec_4x4_slice_init();
 void fmatmul_vec_4x4(float *c, const float *a, const float *b,
                      unsigned long int n, unsigned long int p);
+void fmatmul_uint8(uint8_t *c, const uint8_t *a, const uint8_t *b, unsigned long int m,
+             unsigned long int n, unsigned long int p);
 
-void fmatmul_8x8(float *c, const float *a, const float *b,
+void fmatmul_4x4_uint8(uint8_t *c, const uint8_t *a, const uint8_t *b,
                  unsigned long int m, unsigned long int n, unsigned long int p);
-void fmatmul_vec_8x8_slice_init();
-void fmatmul_vec_8x8(float *c, const float *a, const float *b,
+void fmatmul_vec_4x4_uint8(uint8_t *c, const uint8_t *a, const uint8_t *b,
                      unsigned long int n, unsigned long int p);
-
-void fmatmul_16x16(float *c, const float *a, const float *b,
-                   unsigned long int m, unsigned long int n,
-                   unsigned long int p);
-void fmatmul_vec_16x16_slice_init();
-void fmatmul_vec_16x16(float *c, const float *a, const float *b,
-                       unsigned long int n, unsigned long int p);
 
 #define DELTA 0.000001
 
