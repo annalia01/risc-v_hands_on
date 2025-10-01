@@ -24,25 +24,31 @@
 
 void iconv2d_3x3(int32_t *o, int32_t *i, int32_t *f, int64_t R, int64_t C,
                  int64_t F);
-void iconv2d_vec_4xC_slice_init_3x3(int64_t *o, int64_t C);
-void iconv2d_vec_4xC_slice_preload_3x3(int64_t *i, int64_t C, int64_t F);
-void iconv2d_vec_4xC_slice_move_3x3(int64_t C, int64_t F);
-static inline void iconv2d_vec_4xC_3x3(int64_t *o, int64_t *i__, int64_t *i, int64_t *f, int64_t C,
-                         int64_t F, int t0, int t1, int t2, int t3, int t4, int t5, int t6, int t7, int t8);
+
+void iconv2d_3x3_uint8(int8_t *o, uint8_t *i, int8_t *f, int64_t R, int64_t C,
+                 int64_t F);
 
 void iconv2d_5x5(int32_t *o, int32_t *i, int32_t *f, int64_t R, int64_t C,
                  int64_t F);
-void iconv2d_vec_4xC_slice_init_5x5(int32_t *o, int64_t C);
-void iconv2d_vec_4xC_slice_preload_5x5(int32_t *i, int64_t C, int64_t F);
-void iconv2d_vec_4xC_slice_move_5x5(int64_t C, int64_t F);
+
 void iconv2d_vec_4xC_5x5(int32_t *o, int32_t *i, int32_t *f, int64_t C,
+                         int64_t F, int32_t r);
+                         
+                         
+void iconv2d_5x5_uint8(int8_t *o, uint8_t *i, int8_t *f, int64_t R, int64_t C,
+                 int64_t F);
+
+void iconv2d_vec_4xC_5x5_uint8(int8_t *o, uint8_t *i, int8_t *f, int64_t C,
                          int64_t F, int32_t r);
 
 void iconv2d_7x7(int32_t *o, int32_t *i, int32_t *f, int64_t M, int64_t N,
                  int64_t F);
 void iconv2d_7x7_block(int32_t *o, int32_t *i, int32_t *f, int64_t R, int64_t C,
                        int32_t n_, int64_t F);
-
+void iconv2d_7x7_uint8(int8_t *o, uint8_t *i, int8_t *f, int64_t M, int64_t N,
+                 int64_t F);
+void iconv2d_7x7_block_uint8(int8_t *o, uint8_t *i, int8_t *f, int64_t R, int64_t C,
+                       int32_t n_, int64_t F);
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
 
 #endif
